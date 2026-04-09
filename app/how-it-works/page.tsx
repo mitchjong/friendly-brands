@@ -49,7 +49,11 @@ const steps = [
 const faqs = [
   {
     q: "Do I need to order a full container?",
-    a: "No! That's one of our biggest advantages. You can mix multiple brands onto a single pallet. This means you can start small and add variety to your store without the commitment of a full container.",
+    a: "No! That's one of our biggest advantages. You can mix multiple brands from the same supplier onto a single pallet. This means you can start small and add variety to your store without the commitment of a full container.",
+  },
+  {
+    q: "Can I mix brands from different suppliers?",
+    a: "Brands can be mixed on one pallet within the same supplier, but not across different suppliers — because each supplier ships from a different location. On our Brands page, you can see which brands belong to each supplier and can be combined.",
   },
   {
     q: "What does Ex-works mean?",
@@ -132,10 +136,10 @@ export default function HowItWorksPage() {
           <p className="text-gray-700 max-w-2xl mx-auto leading-relaxed">
             Most distributors require you to order full containers of a single
             brand. With us, you can combine{" "}
-            <strong>multiple brands on one pallet</strong>. That means a
-            pharmacy in Bonaire can stock health, beauty, and household products
-            from different brands — all in one shipment. We optimize every
-            centimeter of pallet space to maximize your investment.
+            <strong>multiple brands from the same supplier on one pallet</strong>.
+            For example, a pharmacy in Bonaire can stock ProBrands, Humble, Tweek,
+            and HealthyCo — all from FCB of Sweden — in a single shipment. We
+            optimize every centimeter of pallet space to maximize your investment.
           </p>
         </div>
       </section>

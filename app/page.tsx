@@ -16,7 +16,7 @@ const valueProps = [
     icon: Package,
     title: "Mix Brands on One Pallet",
     description:
-      "No need for full containers. Combine multiple brands onto a single pallet — add variety to your shelves from day one.",
+      "Combine multiple brands from the same supplier onto a single pallet — no full containers needed. Add variety to your shelves from day one.",
   },
   {
     icon: DollarSign,
