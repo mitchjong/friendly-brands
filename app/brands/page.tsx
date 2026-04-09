@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Package, ArrowRight, Boxes } from "lucide-react";
+import { Package, ArrowRight, Boxes, FileText } from "lucide-react";
 import { getSuppliers } from "@/lib/data";
 import type { Metadata } from "next";
 
@@ -52,15 +52,29 @@ export default async function BrandsPage() {
             <div key={supplier.slug}>
               {/* Supplier Header */}
               <div className="mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">
-                  {supplier.name}
-                </h2>
-                <p className="text-gray-600 text-sm mt-1">
-                  {supplier.description}
-                </p>
-                <div className="inline-flex items-center gap-1.5 mt-3 bg-green-50 text-green-700 text-xs font-medium px-3 py-1.5 rounded-full">
-                  <Boxes className="w-3.5 h-3.5" />
-                  These brands can be combined on one pallet
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <Link
+                      href={`/brands/supplier/${supplier.slug}`}
+                      className="text-2xl font-bold text-gray-900 hover:text-primary-600 transition-colors"
+                    >
+                      {supplier.name}
+                    </Link>
+                    <p className="text-gray-600 text-sm mt-1">
+                      {supplier.description}
+                    </p>
+                    <div className="inline-flex items-center gap-1.5 mt-3 bg-green-50 text-green-700 text-xs font-medium px-3 py-1.5 rounded-full">
+                      <Boxes className="w-3.5 h-3.5" />
+                      These brands can be combined on one pallet
+                    </div>
+                  </div>
+                  <Link
+                    href={`/brands/supplier/${supplier.slug}`}
+                    className="hidden sm:inline-flex items-center gap-1.5 border border-primary-200 text-primary-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-50 transition-colors flex-shrink-0"
+                  >
+                    <FileText className="w-3.5 h-3.5" />
+                    View &amp; Download Catalog
+                  </Link>
                 </div>
               </div>
 

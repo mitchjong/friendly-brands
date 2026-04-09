@@ -25,6 +25,8 @@ export interface Supplier {
   name: string;
   slug: string;
   description: string;
+  catalog_url?: string | null;
+  logo_url?: string | null;
   brands: Brand[];
 }
 
@@ -105,6 +107,11 @@ export async function getSuppliers(): Promise<Supplier[]> {
     ...supplier,
     brands: (brandsRes.data || []).filter((b: { supplier_id: string }) => b.supplier_id === supplier.id),
   }));
+}
+
+export async function getSupplierBySlug(slug: string): Promise<Supplier | null> {
+  const suppliers = await getSuppliers();
+  return suppliers.find((s) => s.slug === slug) || null;
 }
 
 // ─── CUSTOMERS ──────────────────────────────────────────
