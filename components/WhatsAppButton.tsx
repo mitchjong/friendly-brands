@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { MessageCircle } from "lucide-react";
 
-const WHATSAPP_NUMBER = "2975555555"; // Replace with your real number
+const WHATSAPP_NUMBER = "2975940837";
 
 export default function WhatsAppButton() {
   const pathname = usePathname();

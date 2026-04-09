@@ -102,16 +102,16 @@ export default async function HomePage() {
                   <Link
                     key={brand.slug}
                     href={`/brands/${brand.slug}`}
-                    className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 flex items-center justify-center aspect-square hover:bg-white/10 transition-colors group"
+                    className="bg-white rounded-2xl p-5 flex items-center justify-center aspect-square hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group"
                   >
                     {brand.logo_url ? (
                       <img
                         src={brand.logo_url}
                         alt={brand.name}
-                        className="w-full h-full object-contain opacity-80 group-hover:opacity-100 transition-opacity"
+                        className="w-full h-full object-contain p-2"
                       />
                     ) : (
-                      <span className="text-sm font-semibold text-gray-400 group-hover:text-white transition-colors text-center">
+                      <span className="text-sm font-bold text-gray-700 text-center">
                         {brand.name}
                       </span>
                     )}

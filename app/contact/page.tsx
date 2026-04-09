@@ -270,10 +270,10 @@ export default function ContactPage() {
                     <div>
                       <p className="text-sm font-medium text-gray-900">Phone</p>
                       <a
-                        href="tel:+2975555555"
+                        href="tel:+2975940837"
                         className="text-sm text-primary-600 hover:underline"
                       >
-                        +297 555 5555
+                        +297 594 0837
                       </a>
                     </div>
                   </li>
@@ -284,7 +284,7 @@ export default function ContactPage() {
                         WhatsApp
                       </p>
                       <a
-                        href="https://wa.me/2975555555"
+                        href="https://wa.me/2975940837"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm text-green-600 hover:underline"

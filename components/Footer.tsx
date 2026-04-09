@@ -8,7 +8,7 @@ import { createSupabaseBrowser } from "@/lib/supabase-browser";
 const defaults = {
   footer_tagline: "Your trusted distribution partner for the Caribbean. We bring the best brands from Europe to your shelves — one pallet at a time.",
   contact_email: "info@thefriendlybrands.com",
-  contact_phone: "+297 555 5555",
+  contact_phone: "+297 594 0837",
   contact_address: "Oranjestad, Aruba",
 };
 

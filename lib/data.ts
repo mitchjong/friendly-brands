@@ -161,9 +161,9 @@ const fallbackContent: Record<string, string> = {
   about_intro: "We are a division of Protegy Trading, based in Aruba. For years, we've been distributing trusted European brands to retailers and pharmacies on the island. Now, we're expanding those same brands across the Dutch Caribbean — and making it easier than ever for stores to access them.",
   footer_tagline: "Your trusted distribution partner for the Caribbean. We bring the best brands from Europe to your shelves — one pallet at a time.",
   contact_email: "info@thefriendlybrands.com",
-  contact_phone: "+297 555 5555",
+  contact_phone: "+297 594 0837",
   contact_address: "Oranjestad, Aruba",
-  whatsapp_number: "2975555555",
+  whatsapp_number: "2975940837",
 };
 
 export async function getSiteContent(): Promise<Record<string, string>> {
