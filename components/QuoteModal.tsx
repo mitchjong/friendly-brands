@@ -128,12 +128,13 @@ export default function QuoteModal({ open, onClose }: QuoteModalProps) {
                 </div>
                 <div>
                   <label htmlFor="q-phone" className="block text-sm font-medium text-gray-700 mb-1">
-                    Phone
+                    Phone *
                   </label>
                   <input
                     id="q-phone"
                     name="phone"
                     type="tel"
+                    required
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
                   />
                 </div>

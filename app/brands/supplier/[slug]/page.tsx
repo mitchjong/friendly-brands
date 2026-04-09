@@ -11,6 +11,7 @@ import {
   FileText,
   Download,
   X,
+  Mail,
 } from "lucide-react";
 
 interface Brand {
@@ -29,7 +30,6 @@ interface Supplier {
   brands: Brand[];
 }
 
-// Fallback data
 const fallbackSuppliers: Record<string, Supplier> = {
   "fcb-of-sweden": {
     name: "FCB of Sweden",
@@ -61,7 +61,7 @@ const fallbackSuppliers: Record<string, Supplier> = {
     slug: "club-tails",
     description: "Ready-to-drink cocktails and mocktails for the Caribbean lifestyle.",
     brands: [
-      { name: "Club Tails", slug: "club-tails", description: "Premium ready-to-drink cocktails.", category: "Beverages" },
+      { name: "Club Tails", slug: "club-tails-brand", description: "Premium ready-to-drink cocktails.", category: "Beverages" },
       { name: "Crushers from Europe", slug: "crushers-from-europe", description: "European-style crushed fruit cocktail drinks.", category: "Beverages" },
       { name: "Club Tails Mocktails", slug: "club-tails-mocktails", description: "Premium non-alcoholic cocktails.", category: "Beverages" },
     ],
@@ -77,55 +77,133 @@ const fallbackSuppliers: Record<string, Supplier> = {
   },
 };
 
+type Step = "form" | "verify" | "done";
+
 export default function SupplierPage() {
   const params = useParams();
   const slug = params.slug as string;
   const [supplier, setSupplier] = useState<Supplier | null>(null);
   const [catalogOpen, setCatalogOpen] = useState(false);
+  const [step, setStep] = useState<Step>("form");
   const [sending, setSending] = useState(false);
-  const [catalogUrl, setCatalogUrl] = useState<string | null>(null);
+  const [error, setError] = useState("");
+  const [formData, setFormData] = useState({ name: "", email: "", phone: "", business: "", island: "" });
+  const [verifyCode, setVerifyCode] = useState("");
+  const [catalogUrl, setCatalogUrl] = useState("");
 
   useEffect(() => {
-    // Use fallback data — when Supabase is configured, this will fetch dynamically
     setSupplier(fallbackSuppliers[slug] || null);
   }, [slug]);
 
-  async function handleCatalogSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function openCatalog() {
+    setStep("form");
+    setError("");
+    setVerifyCode("");
+    setCatalogOpen(true);
+  }
+
+  async function handleFormSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setSending(true);
+    setError("");
 
     const form = e.currentTarget;
     const data = {
       name: (form.elements.namedItem("name") as HTMLInputElement).value,
       email: (form.elements.namedItem("email") as HTMLInputElement).value,
-      business_name: (form.elements.namedItem("business") as HTMLInputElement).value,
+      phone: (form.elements.namedItem("phone") as HTMLInputElement).value,
+      business: (form.elements.namedItem("business") as HTMLInputElement).value,
       island: (form.elements.namedItem("island") as HTMLSelectElement).value,
-      source: `catalog_${slug}`,
-      brands_interested: supplier?.brands.map((b) => b.name) || [],
     };
+    setFormData(data);
 
     try {
-      // Save as lead
+      // Send verification code
+      const res = await fetch("/api/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: data.email, action: "send" }),
+      });
+      const result = await res.json();
+
+      if (result.success) {
+        setStep("verify");
+      } else {
+        setError(result.error || "Failed to send verification code.");
+      }
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setSending(false);
+    }
+  }
+
+  async function handleVerify() {
+    setSending(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: formData.email, action: "verify", code: verifyCode }),
+      });
+      const result = await res.json();
+
+      if (!result.verified) {
+        setError(result.error || "Invalid code.");
+        setSending(false);
+        return;
+      }
+
+      // Verified! Save as lead
       await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          business_name: formData.business,
+          island: formData.island,
+          source: `catalog_${slug}`,
+          email_opted_in: true,
+          brands_interested: supplier?.brands.map((b) => b.name) || [],
+        }),
       });
 
-      // Track event
+      // Track
       await fetch("/api/track", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           event: "catalog_download",
           page: `/brands/supplier/${slug}`,
-          meta: JSON.stringify({ supplier: supplier?.name }),
+          meta: JSON.stringify({ supplier: supplier?.name, email: formData.email }),
         }),
       });
 
-      setCatalogUrl(supplier?.catalog_url || "pending");
+      setCatalogUrl(supplier?.catalog_url || "");
+      setStep("done");
     } catch {
-      alert("Something went wrong. Please try again.");
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setSending(false);
+    }
+  }
+
+  async function resendCode() {
+    setSending(true);
+    setError("");
+    try {
+      await fetch("/api/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: formData.email, action: "send" }),
+      });
+      setError("New code sent! Check your inbox.");
+    } catch {
+      setError("Failed to resend. Please try again.");
     } finally {
       setSending(false);
     }
@@ -161,7 +239,7 @@ export default function SupplierPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 mt-8">
             <button
-              onClick={() => setCatalogOpen(true)}
+              onClick={openCatalog}
               className="inline-flex items-center justify-center gap-2 bg-white text-primary-700 px-6 py-3 rounded-lg font-semibold hover:bg-primary-50 transition-colors"
             >
               <FileText className="w-4 h-4" />
@@ -240,7 +318,7 @@ export default function SupplierPage() {
             and pricing information.
           </p>
           <button
-            onClick={() => setCatalogOpen(true)}
+            onClick={openCatalog}
             className="inline-flex items-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
           >
             <FileText className="w-4 h-4" />
@@ -252,31 +330,121 @@ export default function SupplierPage() {
       {/* Catalog Gate Modal */}
       {catalogOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-            onClick={() => setCatalogOpen(false)}
-          />
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setCatalogOpen(false)} />
           <div className="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
-            <button
-              onClick={() => setCatalogOpen(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
-            >
+            <button onClick={() => setCatalogOpen(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
               <X className="w-5 h-5" />
             </button>
 
-            {catalogUrl ? (
+            {/* Step 1: Contact Form */}
+            {step === "form" && (
+              <>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-primary-50 rounded-lg flex items-center justify-center">
+                    <FileText className="w-6 h-6 text-primary-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-900">{supplier.name} Catalog</h3>
+                    <p className="text-sm text-gray-500">Products, packaging &amp; pricing</p>
+                  </div>
+                </div>
+
+                {error && (
+                  <div className="bg-red-50 text-red-700 text-sm px-4 py-2 rounded-lg mb-3">{error}</div>
+                )}
+
+                <form onSubmit={handleFormSubmit} className="space-y-3">
+                  <input name="name" required placeholder="Your Name *" className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" />
+                  <input name="email" type="email" required placeholder="Email Address *" className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" />
+                  <input name="phone" type="tel" required placeholder="Phone Number *" className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" />
+                  <input name="business" placeholder="Business Name" className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" />
+                  <select name="island" className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none">
+                    <option value="">Island / Country</option>
+                    <option value="Curacao">Cura&ccedil;ao</option>
+                    <option value="Bonaire">Bonaire</option>
+                    <option value="Sint Maarten">Sint Maarten</option>
+                    <option value="Trinidad">Trinidad</option>
+                    <option value="Aruba">Aruba</option>
+                    <option value="Suriname">Suriname</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  <button type="submit" disabled={sending} className="w-full bg-primary-600 text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50">
+                    {sending ? "Sending verification code..." : "Continue"}
+                  </button>
+                  <p className="text-xs text-gray-400 text-center">
+                    We&apos;ll send a verification code to your email.
+                  </p>
+                </form>
+              </>
+            )}
+
+            {/* Step 2: Email Verification */}
+            {step === "verify" && (
+              <>
+                <div className="text-center mb-6">
+                  <div className="w-14 h-14 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Mail className="w-6 h-6 text-primary-600" />
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900">Check Your Email</h3>
+                  <p className="text-sm text-gray-500 mt-1">
+                    We sent a 6-digit code to <strong>{formData.email}</strong>
+                  </p>
+                </div>
+
+                {error && (
+                  <div className={`text-sm px-4 py-2 rounded-lg mb-3 ${error.includes("sent") ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>
+                    {error}
+                  </div>
+                )}
+
+                <div className="space-y-3">
+                  <input
+                    type="text"
+                    value={verifyCode}
+                    onChange={(e) => setVerifyCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                    placeholder="Enter 6-digit code"
+                    maxLength={6}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-3 text-center text-xl font-mono tracking-widest focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+                  />
+                  <button
+                    onClick={handleVerify}
+                    disabled={sending || verifyCode.length !== 6}
+                    className="w-full bg-primary-600 text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50"
+                  >
+                    {sending ? "Verifying..." : "Verify & Download Catalog"}
+                  </button>
+                  <div className="flex items-center justify-between text-xs">
+                    <button
+                      onClick={resendCode}
+                      disabled={sending}
+                      className="text-primary-600 hover:text-primary-700 font-medium disabled:opacity-50"
+                    >
+                      Resend code
+                    </button>
+                    <button
+                      onClick={() => { setStep("form"); setError(""); }}
+                      className="text-gray-400 hover:text-gray-600"
+                    >
+                      Change email
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* Step 3: Download */}
+            {step === "done" && (
               <div className="text-center py-4">
-                <div className="w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Download className="w-7 h-7 text-primary-600" />
+                <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Download className="w-7 h-7 text-green-600" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  Catalog Ready!
+                  Email Verified!
                 </h3>
                 <p className="text-sm text-gray-600 mb-6">
-                  Thank you for your interest in {supplier.name}. We&apos;ll
-                  also follow up with more details.
+                  Thank you, {formData.name}. Your {supplier.name} catalog is ready.
                 </p>
-                {catalogUrl !== "pending" ? (
+                {catalogUrl ? (
                   <a
                     href={catalogUrl}
                     target="_blank"
@@ -288,71 +456,11 @@ export default function SupplierPage() {
                   </a>
                 ) : (
                   <p className="text-sm text-gray-500">
-                    The catalog is being prepared. We&apos;ll email it to you
-                    shortly!
+                    The catalog is being prepared. We&apos;ll email it to you at{" "}
+                    <strong>{formData.email}</strong> shortly!
                   </p>
                 )}
               </div>
-            ) : (
-              <>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 bg-primary-50 rounded-lg flex items-center justify-center">
-                    <FileText className="w-6 h-6 text-primary-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900">
-                      {supplier.name} Catalog
-                    </h3>
-                    <p className="text-sm text-gray-500">
-                      Products, packaging details &amp; pricing
-                    </p>
-                  </div>
-                </div>
-
-                <form onSubmit={handleCatalogSubmit} className="space-y-3">
-                  <input
-                    name="name"
-                    required
-                    placeholder="Your Name *"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
-                  />
-                  <input
-                    name="email"
-                    type="email"
-                    required
-                    placeholder="Email Address *"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
-                  />
-                  <input
-                    name="business"
-                    placeholder="Business Name"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
-                  />
-                  <select
-                    name="island"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
-                  >
-                    <option value="">Island / Country</option>
-                    <option value="Curacao">Cura&ccedil;ao</option>
-                    <option value="Bonaire">Bonaire</option>
-                    <option value="Sint Maarten">Sint Maarten</option>
-                    <option value="Trinidad">Trinidad</option>
-                    <option value="Aruba">Aruba</option>
-                    <option value="Suriname">Suriname</option>
-                    <option value="Other">Other</option>
-                  </select>
-                  <button
-                    type="submit"
-                    disabled={sending}
-                    className="w-full bg-primary-600 text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50"
-                  >
-                    {sending ? "Processing..." : "Get the Catalog"}
-                  </button>
-                  <p className="text-xs text-gray-400 text-center">
-                    We respect your privacy. No spam, ever.
-                  </p>
-                </form>
-              </>
             )}
           </div>
         </div>
