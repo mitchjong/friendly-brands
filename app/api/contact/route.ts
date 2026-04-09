@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
       try {
         const { resend } = await import("@/lib/resend");
         await resend.emails.send({
-          from: "The Friendly Brands <notifications@thefriendlybrands.com>",
+          from: "The Friendly Brands <notifications@protegysupplements.com>",
           to: "info@thefriendlybrands.com",
           subject: `New Lead: ${name} from ${island || "Unknown"}`,
           html: `

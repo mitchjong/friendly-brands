@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
         try {
           const { resend } = await import("@/lib/resend");
           await resend.emails.send({
-            from: "The Friendly Brands <noreply@thefriendlybrands.com>",
+            from: "The Friendly Brands <noreply@protegysupplements.com>",
             to: email,
             subject: "Your verification code — The Friendly Brands",
             html: `
