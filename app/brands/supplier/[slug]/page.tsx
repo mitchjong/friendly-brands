@@ -95,12 +95,14 @@ export default function SupplierPage() {
     setSupplier(fallbackSuppliers[slug] || null);
   }, [slug]);
 
+  /* Uncomment when catalogs are ready
   function openCatalog() {
     setStep("form");
     setError("");
     setVerifyCode("");
     setCatalogOpen(true);
   }
+  */
 
   async function handleFormSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -238,6 +240,7 @@ export default function SupplierPage() {
             {supplier.description}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 mt-8">
+            {/* Uncomment when catalogs are ready
             <button
               onClick={openCatalog}
               className="inline-flex items-center justify-center gap-2 bg-white text-primary-700 px-6 py-3 rounded-lg font-semibold hover:bg-primary-50 transition-colors"
@@ -245,6 +248,7 @@ export default function SupplierPage() {
               <FileText className="w-4 h-4" />
               Download {supplier.name} Catalog
             </button>
+            */}
             <Link
               href="/contact"
               className="inline-flex items-center justify-center gap-2 border-2 border-white/30 text-white px-6 py-3 rounded-lg font-semibold hover:bg-white/10 transition-colors"
@@ -311,19 +315,19 @@ export default function SupplierPage() {
       <section className="bg-gray-50 py-12">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-3">
-            Want the Full {supplier.name} Product List?
+            Interested in {supplier.name} Products?
           </h2>
           <p className="text-gray-600 mb-6">
-            Download the complete catalog with all products, packaging details,
-            and pricing information.
+            Get in touch and we&apos;ll prepare a tailored quote for your store.
           </p>
-          <button
-            onClick={openCatalog}
+          <Link
+            href="/contact"
             className="inline-flex items-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
           >
             <FileText className="w-4 h-4" />
-            Get the Catalog
-          </button>
+            Request a Quote
+            <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </section>
 

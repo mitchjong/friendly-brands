@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X, MessageSquareQuote, FileText } from "lucide-react";
+import { Menu, X, MessageSquareQuote } from "lucide-react";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -14,10 +14,9 @@ const navLinks = [
 
 export default function Header({
   onOpenQuote,
-  onOpenCatalog,
 }: {
   onOpenQuote: () => void;
-  onOpenCatalog: () => void;
+  // onOpenCatalog: () => void; // Uncomment when catalogs are ready
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -45,6 +44,7 @@ export default function Header({
                 {link.label}
               </Link>
             ))}
+            {/* Catalog button — uncomment when catalogs are ready
             <button
               onClick={onOpenCatalog}
               className="inline-flex items-center gap-1.5 border border-primary-200 text-primary-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-primary-50 transition-colors"
@@ -52,6 +52,7 @@ export default function Header({
               <FileText className="w-3.5 h-3.5" />
               Catalog
             </button>
+            */}
             <button
               onClick={onOpenQuote}
               className="inline-flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-primary-700 transition-colors"
@@ -86,6 +87,7 @@ export default function Header({
                 {link.label}
               </Link>
             ))}
+            {/* Catalog button — uncomment when catalogs are ready
             <button
               onClick={() => {
                 setMobileOpen(false);
@@ -96,6 +98,7 @@ export default function Header({
               <FileText className="w-4 h-4" />
               Download Catalog
             </button>
+            */}
             <button
               onClick={() => {
                 setMobileOpen(false);

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Package, ArrowRight, Boxes, FileText } from "lucide-react";
+import { Package, ArrowRight, Boxes } from "lucide-react";
 import { getSuppliers } from "@/lib/data";
 import type { Metadata } from "next";
 
@@ -68,6 +68,7 @@ export default async function BrandsPage() {
                       These brands can be combined on one pallet
                     </div>
                   </div>
+                  {/* Uncomment when catalogs are ready
                   <Link
                     href={`/brands/supplier/${supplier.slug}`}
                     className="hidden sm:inline-flex items-center gap-1.5 border border-primary-200 text-primary-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-50 transition-colors flex-shrink-0"
@@ -75,6 +76,7 @@ export default async function BrandsPage() {
                     <FileText className="w-3.5 h-3.5" />
                     View &amp; Download Catalog
                   </Link>
+                  */}
                 </div>
               </div>
 

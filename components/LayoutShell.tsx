@@ -6,13 +6,14 @@ import Header from "./Header";
 import Footer from "./Footer";
 import WhatsAppButton from "./WhatsAppButton";
 import QuoteModal from "./QuoteModal";
-import CatalogGate from "./CatalogGate";
-import ExitIntentPopup from "./ExitIntentPopup";
-import StickyCTA from "./StickyCTA";
+// Uncomment when catalogs are ready
+// import CatalogGate from "./CatalogGate";
+// import ExitIntentPopup from "./ExitIntentPopup";
+// import StickyCTA from "./StickyCTA";
 
 export default function LayoutShell({ children }: { children: React.ReactNode }) {
   const [quoteOpen, setQuoteOpen] = useState(false);
-  const [catalogOpen, setCatalogOpen] = useState(false);
+  // const [catalogOpen, setCatalogOpen] = useState(false); // Uncomment when catalogs are ready
   const pathname = usePathname();
 
   // Track page views
@@ -31,19 +32,20 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
     <>
       <Header
         onOpenQuote={() => setQuoteOpen(true)}
-        onOpenCatalog={() => setCatalogOpen(true)}
       />
       <main className="min-h-screen">{children}</main>
       <Footer />
       {!isAdmin && (
         <>
           <WhatsAppButton />
+          {/* Uncomment when catalogs are ready
           <StickyCTA onOpenCatalog={() => setCatalogOpen(true)} />
           <ExitIntentPopup />
+          */}
         </>
       )}
       <QuoteModal open={quoteOpen} onClose={() => setQuoteOpen(false)} />
-      <CatalogGate open={catalogOpen} onClose={() => setCatalogOpen(false)} />
+      {/* <CatalogGate open={catalogOpen} onClose={() => setCatalogOpen(false)} /> */}
     </>
   );
 }
