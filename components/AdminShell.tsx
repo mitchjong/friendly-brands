@@ -23,7 +23,8 @@ const navItems = [
   { href: "/admin/brands", label: "Brands", icon: Package },
   { href: "/admin/customers", label: "Customers", icon: Users },
   { href: "/admin/leads", label: "Leads", icon: FileText },
-  { href: "/admin/content", label: "Site Content", icon: Settings },
+  { href: "/admin/content", label: "Site Content", icon: FileText },
+  { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {

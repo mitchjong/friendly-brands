@@ -60,7 +60,7 @@ const fallbackSuppliers: Supplier[] = [
     slug: "club-tails",
     description: "Ready-to-drink cocktails and mocktails for the Caribbean lifestyle.",
     brands: [
-      { name: "Club Tails", slug: "club-tails", description: "Premium ready-to-drink cocktails. Bold flavors, party-ready.", category: "Beverages", featured: true },
+      { name: "Club Tails", slug: "club-tails-brand", description: "Premium ready-to-drink cocktails. Bold flavors, party-ready.", category: "Beverages", featured: true },
       { name: "Crushers from Europe", slug: "crushers-from-europe", description: "European-style crushed fruit cocktail drinks.", category: "Beverages", featured: true },
       { name: "Club Tails Mocktails", slug: "club-tails-mocktails", description: "All the flavor, none of the alcohol. Premium non-alcoholic cocktails.", category: "Beverages", featured: true },
     ],

@@ -45,11 +45,12 @@ export async function middleware(request: NextRequest) {
     isAuthenticated = !!user;
   }
 
-  // Protect /admin routes (except /admin/login)
-  if (
-    request.nextUrl.pathname.startsWith("/admin") &&
-    !request.nextUrl.pathname.startsWith("/admin/login")
-  ) {
+  // Public admin routes that don't require auth
+  const publicAdminPaths = ["/admin/login", "/admin/forgot-password", "/admin/reset-password"];
+  const isPublicAdmin = publicAdminPaths.some((p) => request.nextUrl.pathname.startsWith(p));
+
+  // Protect /admin routes (except public ones)
+  if (request.nextUrl.pathname.startsWith("/admin") && !isPublicAdmin) {
     if (!isAuthenticated) {
       const loginUrl = new URL("/admin/login", request.url);
       loginUrl.searchParams.set("redirect", request.nextUrl.pathname);

@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createSupabaseBrowser } from "@/lib/supabase-browser";
 import { LogIn } from "lucide-react";
@@ -95,6 +96,15 @@ function LoginForm() {
           <LogIn className="w-4 h-4" />
           {loading ? "Signing in..." : "Sign In"}
         </button>
+
+        <div className="text-center">
+          <Link
+            href="/admin/forgot-password"
+            className="text-sm text-gray-500 hover:text-primary-600"
+          >
+            Forgot your password?
+          </Link>
+        </div>
       </form>
 
       {/* Demo login for local development */}

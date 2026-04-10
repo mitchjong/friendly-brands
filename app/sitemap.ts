@@ -1,9 +1,10 @@
 import { MetadataRoute } from "next";
-import { brands } from "@/lib/brands-data";
+import { getBrands } from "@/lib/data";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://thefriendlybrands.com";
 
+  const brands = await getBrands();
   const brandPages = brands.map((brand) => ({
     url: `${baseUrl}/brands/${brand.slug}`,
     lastModified: new Date(),

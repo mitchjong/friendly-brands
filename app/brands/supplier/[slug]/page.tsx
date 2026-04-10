@@ -13,69 +13,7 @@ import {
   X,
   Mail,
 } from "lucide-react";
-
-interface Brand {
-  name: string;
-  slug: string;
-  description: string;
-  category: string;
-  logo_url?: string | null;
-}
-
-interface Supplier {
-  name: string;
-  slug: string;
-  description: string;
-  catalog_url?: string | null;
-  brands: Brand[];
-}
-
-const fallbackSuppliers: Record<string, Supplier> = {
-  "fcb-of-sweden": {
-    name: "FCB of Sweden",
-    slug: "fcb-of-sweden",
-    description:
-      "One of Scandinavia's leading FMCG distributors with a wide portfolio of health, sports nutrition, personal care, and household brands.",
-    brands: [
-      { name: "ProBrands", slug: "probrands", description: "Premium sports nutrition and functional beverages.", category: "Beverages", logo_url: "https://static.wixstatic.com/media/b721ce_ef373aa72ddc4074bd06762a5595229e~mv2.png/v1/fill/w_217,h_113,al_c,lg_1,q_85,enc_avif,quality_auto/probrands.png" },
-      { name: "HealthyCo", slug: "healthyco", description: "Better-for-you food alternatives with less sugar.", category: "Food & Snacks", logo_url: "https://static.wixstatic.com/media/b721ce_c06d698ba6f34ce6a4dd7cec1f87c305~mv2.png/v1/fill/w_332,h_258,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/healthyco.png" },
-      { name: "Tweek", slug: "tweek", description: "Swedish candy with less sugar.", category: "Food & Snacks", logo_url: "https://static.wixstatic.com/media/b721ce_156db46d48be4efb91df8f9ce3209fa3~mv2.png/v1/fill/w_334,h_162,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/tweek.png" },
-      { name: "Pandy", slug: "pandy", description: "Protein-enriched candy and snacks.", category: "Food & Snacks", logo_url: "https://static.wixstatic.com/media/b721ce_8c06ea82374641a998c81c02c6245254~mv2.png/v1/fill/w_322,h_178,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Pandy_logo_red_RGB_690x.png" },
-      { name: "Body Science", slug: "body-science", description: "Premium sports nutrition from Sweden.", category: "Health & Beauty" },
-      { name: "Humble", slug: "humble", description: "Eco-friendly personal care products.", category: "Health & Beauty", logo_url: "https://static.wixstatic.com/media/b721ce_25d4bb0645ad491f8a52b5ee5bcd1437~mv2.png/v1/fill/w_272,h_151,al_c,lg_1,q_85,enc_avif,quality_auto/humble.png" },
-      { name: "Aloes", slug: "aloes", description: "Pure aloe vera products.", category: "Health & Beauty", logo_url: "https://static.wixstatic.com/media/b721ce_f9c0f8e0e3e6451caea046c722a63a99~mv2.png/v1/fill/w_256,h_258,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/aloes_logo.png" },
-      { name: "Wolverine", slug: "wolverine", description: "Professional work gloves.", category: "Household", logo_url: "https://static.wixstatic.com/media/b721ce_25ea824982844fe9aad78b47cb8e05e8~mv2.png/v1/fill/w_390,h_108,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/wolverine_logo.png" },
-    ],
-  },
-  nije: {
-    name: "NIJE",
-    slug: "nije",
-    description: "Innovative consumer brands focused on modern lifestyle products.",
-    brands: [
-      { name: "Propod", slug: "propod", description: "Next-generation pod-based products.", category: "Beverages" },
-      { name: "Locally", slug: "locally", description: "Locally sourced and sustainably produced goods.", category: "Food & Snacks" },
-    ],
-  },
-  "club-tails": {
-    name: "Club Tails",
-    slug: "club-tails",
-    description: "Ready-to-drink cocktails and mocktails for the Caribbean lifestyle.",
-    brands: [
-      { name: "Club Tails", slug: "club-tails-brand", description: "Premium ready-to-drink cocktails.", category: "Beverages" },
-      { name: "Crushers from Europe", slug: "crushers-from-europe", description: "European-style crushed fruit cocktail drinks.", category: "Beverages" },
-      { name: "Club Tails Mocktails", slug: "club-tails-mocktails", description: "Premium non-alcoholic cocktails.", category: "Beverages" },
-    ],
-  },
-  "bioforce-estel": {
-    name: "BioForce / Estel",
-    slug: "bioforce-estel",
-    description: "Natural health, herbal remedies, and wellness products rooted in European tradition.",
-    brands: [
-      { name: "BioForce", slug: "bioforce", description: "Natural health and herbal remedies.", category: "Health & Beauty", logo_url: "https://static.wixstatic.com/media/b721ce_9677ccd123934bb1bc42a4b31dc627f1~mv2.png/v1/fill/w_368,h_230,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Logo%20BioForce-01.png" },
-      { name: "Estel", slug: "estel", description: "Professional beauty and personal care.", category: "Health & Beauty" },
-    ],
-  },
-};
+import { getSuppliers, type Supplier } from "@/lib/data";
 
 type Step = "form" | "verify" | "done";
 
@@ -92,7 +30,11 @@ export default function SupplierPage() {
   const [catalogUrl, setCatalogUrl] = useState("");
 
   useEffect(() => {
-    setSupplier(fallbackSuppliers[slug] || null);
+    async function loadSupplier() {
+      const suppliers = await getSuppliers();
+      setSupplier(suppliers.find((s) => s.slug === slug) || null);
+    }
+    loadSupplier();
   }, [slug]);
 
   /* Uncomment when catalogs are ready

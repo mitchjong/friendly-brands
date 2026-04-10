@@ -23,16 +23,40 @@ export default function ContactPage() {
           setBrands(data);
         } else {
           setBrands([
-            { name: "Brand 1", slug: "brand-1" },
-            { name: "Brand 2", slug: "brand-2" },
-            { name: "Brand 3", slug: "brand-3" },
+            { name: "ProBrands", slug: "probrands" },
+            { name: "HealthyCo", slug: "healthyco" },
+            { name: "Tweek", slug: "tweek" },
+            { name: "Pandy", slug: "pandy" },
+            { name: "Body Science", slug: "body-science" },
+            { name: "Humble", slug: "humble" },
+            { name: "Aloes", slug: "aloes" },
+            { name: "Wolverine", slug: "wolverine" },
+            { name: "Propod", slug: "propod" },
+            { name: "Locally", slug: "locally" },
+            { name: "Club Tails", slug: "club-tails-brand" },
+            { name: "Crushers from Europe", slug: "crushers-from-europe" },
+            { name: "Club Tails Mocktails", slug: "club-tails-mocktails" },
+            { name: "BioForce", slug: "bioforce" },
+            { name: "Estel", slug: "estel" },
           ]);
         }
       } catch {
         setBrands([
-          { name: "Brand 1", slug: "brand-1" },
-          { name: "Brand 2", slug: "brand-2" },
-          { name: "Brand 3", slug: "brand-3" },
+          { name: "ProBrands", slug: "probrands" },
+          { name: "HealthyCo", slug: "healthyco" },
+          { name: "Tweek", slug: "tweek" },
+          { name: "Pandy", slug: "pandy" },
+          { name: "Body Science", slug: "body-science" },
+          { name: "Humble", slug: "humble" },
+          { name: "Aloes", slug: "aloes" },
+          { name: "Wolverine", slug: "wolverine" },
+          { name: "Propod", slug: "propod" },
+          { name: "Locally", slug: "locally" },
+          { name: "Club Tails", slug: "club-tails-brand" },
+          { name: "Crushers from Europe", slug: "crushers-from-europe" },
+          { name: "Club Tails Mocktails", slug: "club-tails-mocktails" },
+          { name: "BioForce", slug: "bioforce" },
+          { name: "Estel", slug: "estel" },
         ]);
       }
     }
