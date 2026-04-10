@@ -20,6 +20,7 @@ import {
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
+  { href: "/admin/suppliers", label: "Suppliers", icon: Users },
   { href: "/admin/brands", label: "Brands", icon: Package },
   { href: "/admin/customers", label: "Customers", icon: Users },
   { href: "/admin/leads", label: "Leads", icon: FileText },

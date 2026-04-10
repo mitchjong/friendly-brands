@@ -15,12 +15,18 @@ interface Brand {
   featured: boolean;
   active: boolean;
   sort_order: number;
+  supplier_id: string | null;
 }
 
 interface Category {
   id: string;
   name: string;
   slug: string;
+}
+
+interface SupplierOption {
+  id: string;
+  name: string;
 }
 
 const emptyBrand = {
@@ -33,11 +39,13 @@ const emptyBrand = {
   featured: false,
   active: true,
   sort_order: 0,
+  supplier_id: "",
 };
 
 export default function AdminBrandsPage() {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [supplierOptions, setSupplierOptions] = useState<SupplierOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Brand | null>(null);
@@ -48,12 +56,14 @@ export default function AdminBrandsPage() {
   const supabase = createSupabaseBrowser();
 
   const load = useCallback(async () => {
-    const [brandsRes, catsRes] = await Promise.all([
+    const [brandsRes, catsRes, suppliersRes] = await Promise.all([
       supabase.from("brands").select("*").order("sort_order"),
       supabase.from("categories").select("*").order("sort_order"),
+      supabase.from("suppliers").select("id, name").order("sort_order"),
     ]);
     setBrands(brandsRes.data || []);
     setCategories(catsRes.data || []);
+    setSupplierOptions(suppliersRes.data || []);
     setLoading(false);
   }, [supabase]);
 
@@ -79,6 +89,7 @@ export default function AdminBrandsPage() {
       featured: brand.featured,
       active: brand.active,
       sort_order: brand.sort_order,
+      supplier_id: brand.supplier_id || "",
     });
     setModalOpen(true);
   }
@@ -118,6 +129,7 @@ export default function AdminBrandsPage() {
       featured: form.featured,
       active: form.active,
       sort_order: form.sort_order,
+      supplier_id: form.supplier_id || null,
     };
 
     if (editing) {
@@ -285,6 +297,22 @@ export default function AdminBrandsPage() {
                   onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 outline-none text-gray-500"
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Supplier *</label>
+                <select
+                  value={form.supplier_id}
+                  onChange={(e) => setForm((f) => ({ ...f, supplier_id: e.target.value }))}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 outline-none"
+                >
+                  <option value="">No supplier</option>
+                  {supplierOptions.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div>
