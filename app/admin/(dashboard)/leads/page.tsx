@@ -140,15 +140,25 @@ export default function AdminLeadsPage() {
       contacts: form.contacts.length > 0 ? form.contacts : null,
     };
 
+    let error;
     if (editingId) {
-      await supabase.from("leads").update({ ...data, updated_at: new Date().toISOString() }).eq("id", editingId);
+      const res = await supabase.from("leads").update({ ...data, updated_at: new Date().toISOString() }).eq("id", editingId);
+      error = res.error;
     } else {
-      await supabase.from("leads").insert(data);
+      const res = await supabase.from("leads").insert(data);
+      error = res.error;
+    }
+
+    if (error) {
+      console.error("Save error:", error);
+      alert(`Error saving lead: ${error.message}`);
+      setSaving(false);
+      return;
     }
 
     setAddOpen(false);
     setSaving(false);
-    load();
+    await load();
   }
 
   async function updateStatus(id: string, status: string) {
